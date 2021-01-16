@@ -57,7 +57,7 @@ const cors_1 = __importDefault(require("cors"));
     })));
     app.get('/auth/github', passport_1.default.authenticate('github', { session: false }));
     app.get('/auth/github/callback', passport_1.default.authenticate('github', { session: false }), function (req, res) {
-        res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
+        res.redirect(`http://localhost:3002/auth/${req.user.accessToken}`);
     });
     app.get("/", (_req, res) => {
         res.send("it's working!");

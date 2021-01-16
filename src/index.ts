@@ -54,7 +54,8 @@ import cors from 'cors';
     app.get('/auth/github/callback',
         passport.authenticate('github', { session: false }),
         function (req: any, res) {
-            res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
+            res.redirect(`http://localhost:3002/auth/${req.user.accessToken}`);
+            //res.send("logged in")
         });
 
     app.get("/", (_req, res) => {
