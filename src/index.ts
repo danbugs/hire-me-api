@@ -1,17 +1,16 @@
 require("dotenv-safe").config();
 
-// import "reflect-metadata";
+import "reflect-metadata";
 import express from 'express';
 import { createConnection } from 'typeorm';
 import { __prod__ } from "./constants";
 import { join } from "path";
-// import { User } from "./entities/User";
+import { User } from "./entities/User";
 
-// import { Strategy as GitHubStrategy } from 'passport-github';
-// import passport from 'passport';
-// import jwt from 'jsonwebtoken';
+import { Strategy as GitHubStrategy } from 'passport-github';
+import passport from 'passport';
+import jwt from 'jsonwebtoken';
 import cors from 'cors';
-import { User } from './entities/User';
 
 (async () => {
     await createConnection({
@@ -52,8 +51,9 @@ import { User } from './entities/User';
 
     app.get('/auth/github/callback',
         passport.authenticate('github', { session: false }),
-        function (req: any, res) {
-            res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
+        function (_req: any, res) {
+            //res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
+            res.send("hello");
         });
 
     app.get("/", (_req, res) => {
