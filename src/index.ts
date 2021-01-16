@@ -1,16 +1,16 @@
-require("dotenv-safe").config();
+require("dotenv").config();
 
 import "reflect-metadata";
 import express from 'express';
 import { createConnection } from 'typeorm';
 import { __prod__ } from "./constants";
 import { join } from "path";
-import { User } from "./entities/User";
 
 import { Strategy as GitHubStrategy } from 'passport-github';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
+import { User } from './entities/User';
 
 (async () => {
     await createConnection({
