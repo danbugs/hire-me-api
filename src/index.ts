@@ -15,24 +15,24 @@ import { User } from './entities/User';
 (async () => {
     await createConnection({
         type: 'postgres',
-        url: process.env.CON_STRING,
+        url: process.env.POSTGRES_URL,
         entities: [join(__dirname, './entities/*.*')],
         logging: !__prod__,
         synchronize: !__prod__
     });
 
     const app = express();
-    // passport.serializeUser(function (user: any, done) {
-    //     done(null, user.accessToken);
-    // });
-    // app.use(passport.initialize());
+    passport.serializeUser(function (user: any, done) {
+        done(null, user.accessToken);
+    });
+    app.use(passport.initialize());
     app.use(cors());
     app.use(express.json());
 
     passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID as string,
         clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-        callbackURL: "http://localhost:3000/auth/github/callback"
+        callbackURL: "https://hire-me-api.vercel.app/auth/github/callback"
     },
         async (_, __, profile, cb) => {
             let user = await User.findOne({ where: { githubId: profile.id } })
