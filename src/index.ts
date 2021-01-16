@@ -51,9 +51,8 @@ import { User } from './entities/User';
 
     app.get('/auth/github/callback',
         passport.authenticate('github', { session: false }),
-        function (_req: any, res) {
-            //res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
-            res.send("hello");
+        function (req: any, res) {
+            res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
         });
 
     app.get("/", (_req, res) => {
