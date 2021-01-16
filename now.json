@@ -7,6 +7,9 @@
         "use": "@now/node"
         }
     ],
+    "env": {
+      "CON_STRING": "@con-string"
+    },
     "routes": [{
         "headers": {
             "Access-Control-Allow-Origin": "*",
