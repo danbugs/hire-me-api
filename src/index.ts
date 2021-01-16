@@ -29,8 +29,6 @@ import { User } from './entities/User';
     app.use(cors());
     app.use(express.json());
 
-    fetch(`https://api.github.com/users/torvalds/orgs`)
-
     passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID as string,
         clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
