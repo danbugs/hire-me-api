@@ -12,9 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("dotenv-safe").config();
 const express_1 = __importDefault(require("express"));
+const typeorm_1 = require("typeorm");
+const constants_1 = require("./constants");
+const path_1 = require("path");
 const cors_1 = __importDefault(require("cors"));
 (() => __awaiter(void 0, void 0, void 0, function* () {
+    yield typeorm_1.createConnection({
+        type: 'postgres',
+        url: process.env.CON_STRING,
+        entities: [path_1.join(__dirname, './entities/*.*')],
+        logging: !constants_1.__prod__,
+        synchronize: !constants_1.__prod__
+    });
     const app = express_1.default();
     app.use(cors_1.default());
     app.use(express_1.default.json());
