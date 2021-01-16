@@ -15,12 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv-safe").config();
 require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
+const constants_1 = require("./constants");
 const User_1 = require("./entities/User");
 const passport_github_1 = require("passport-github");
 const passport_1 = __importDefault(require("passport"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cors_1 = __importDefault(require("cors"));
 (() => __awaiter(void 0, void 0, void 0, function* () {
+    yield createConnection({
+        type: 'postgres',
+        url: process.env.CON_STRING,
+        entities: [join(__dirname, './entities/*.*')],
+        logging: !constants_1.__prod__,
+        synchronize: !constants_1.__prod__
+    });
     const app = express_1.default();
     app.use(cors_1.default());
     app.use(express_1.default.json());
