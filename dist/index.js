@@ -13,26 +13,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv-safe").config();
-require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
+const typeorm_1 = require("typeorm");
 const constants_1 = require("./constants");
-const User_1 = require("./entities/User");
-const passport_github_1 = require("passport-github");
-const passport_1 = __importDefault(require("passport"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const path_1 = require("path");
 const cors_1 = __importDefault(require("cors"));
+const User_1 = require("./entities/User");
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    yield createConnection({
+    yield typeorm_1.createConnection({
         type: 'postgres',
         url: process.env.CON_STRING,
-        entities: [join(__dirname, './entities/*.*')],
+        entities: [path_1.join(__dirname, './entities/*.*')],
         logging: !constants_1.__prod__,
         synchronize: !constants_1.__prod__
     });
     const app = express_1.default();
     app.use(cors_1.default());
     app.use(express_1.default.json());
-    passport_1.default.use(new passport_github_1.Strategy({
+    passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: "http://localhost:3000/auth/github/callback"
@@ -45,10 +43,10 @@ const cors_1 = __importDefault(require("cors"));
         else {
             user = yield User_1.User.create({ name: profile.displayName, githubId: profile.id }).save();
         }
-        cb(null, { accessToken: jsonwebtoken_1.default.sign({ userId: user.id }, process.env.JWT_SECRET_KEY, { expiresIn: "1y" }) });
+        cb(null, { accessToken: jwt.sign({ userId: user.id }, process.env.JWT_SECRET_KEY, { expiresIn: "1y" }) });
     })));
-    app.get('/auth/github', passport_1.default.authenticate('github', { session: false }));
-    app.get('/auth/github/callback', passport_1.default.authenticate('github', { session: false }), function (req, res) {
+    app.get('/auth/github', passport.authenticate('github', { session: false }));
+    app.get('/auth/github/callback', passport.authenticate('github', { session: false }), function (req, res) {
         res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
     });
     app.get("/", (_req, res) => {
