@@ -27,7 +27,7 @@ import { Question } from "./entities/Question";
         extra: { connectionLimit: 5 }
     });
 
-   //await Organization.create({ name:"testOrganization"}).save();
+    //await Organization.create({ name:"testOrganization"}).save();
 
     const app = express();
     passport.serializeUser(function (user: any, done) {
@@ -56,12 +56,19 @@ import { Question } from "./entities/Question";
 
     app.post("/question", isAuth, async (req, res) => {
         const question = await Question.create({
-          text: req.body.text,
-          creatorId: req.userId,
+            text: req.body.text,
+            creatorId: req.userId,
         }).save();
         res.send({ question });
-      });
+    });
 
+    app.get("/question", isAuth, async (_req, res) => {
+        const questions = await Question.find({
+            order: { id: "DESC" },
+        });
+
+        res.send({ questions });
+    });
     app.get('/auth/github',
         passport.authenticate('github', { session: false }));
 
@@ -113,18 +120,17 @@ import { Question } from "./entities/Question";
         "/user",
         isAuth,
         async (req: any, res) => {
-        
-        let currentUser = await getUser(req.body.id);
 
-        if(currentUser.isRecruiter != req.body.isRecruiter)
-        {
-            await Recruiter.create({ name: currentUser.name, githubId: currentUser.githubId, organizationId: 1}).save();
+            let currentUser = await getUser(req.body.id);
+
+            if (currentUser.isRecruiter != req.body.isRecruiter) {
+                await Recruiter.create({ name: currentUser.name, githubId: currentUser.githubId, organizationId: 1 }).save();
+            }
+            await User.update(req.body.id, req.body);
+
+            res.json({ user: await getUser(req.body.id) });
         }
-          await User.update(req.body.id, req.body);
-    
-          res.json({ user: await getUser(req.body.id)});
-        }
-      );
+    );
 
     app.listen(3000);
 })();
