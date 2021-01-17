@@ -12,6 +12,8 @@ import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import { User } from './entities/User';
+import { Recruiter } from './entities/Recruiter';
+//import { Organization } from './entities/Organization';
 import { isAuth } from "./isAuth";
 
 (async () => {
@@ -22,6 +24,8 @@ import { isAuth } from "./isAuth";
         logging: !__prod__,
         synchronize: !__prod__
     });
+
+   //await Organization.create({ name:"testOrganization"}).save();
 
     const app = express();
     passport.serializeUser(function (user: any, done) {
@@ -92,13 +96,20 @@ import { isAuth } from "./isAuth";
     });
 
     app.get("/", (_req, res) => {
-        res.send("Hello, World!");
+        res.send("Byeeeeeeeeeeeeeeeee, World!");
     });
 
     app.put(
         "/user",
         isAuth,
         async (req: any, res) => {
+        
+        let currentUser = await getUser(req.body.id);
+
+        if(currentUser.isRecruiter != req.body.isRecruiter)
+        {
+            await Recruiter.create({ name: currentUser.name, githubId: currentUser.githubId, organizationId: 1}).save();
+        }
           await User.update(req.body.id, req.body);
     
           res.json({ user: await getUser(req.body.id)});
