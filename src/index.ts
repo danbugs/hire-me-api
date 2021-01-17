@@ -55,6 +55,40 @@ import { User } from './entities/User';
             res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
         });
 
+    app.get("/me", async (req, res) => {
+        // Bearer 120jdklowqjed021901
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            res.send({ user: null });
+            return;
+        }
+
+        const token = authHeader.split(" ")[1];
+        if (!token) {
+            res.send({ user: null });
+            return;
+        }
+
+        let userId = "";
+
+        try {
+            const payload: any = jwt.verify(token, process.env.JWT_SECRET_KEY);
+            userId = payload.userId;
+        } catch (err) {
+            res.send({ user: null });
+            return;
+        }
+
+        if (!userId) {
+            res.send({ user: null });
+            return;
+        }
+
+        const user = await User.findOne(userId);
+
+        res.send({ user });
+    });
+
     app.get("/", (_req, res) => {
         res.send("it's working!");
     });
