@@ -40,7 +40,7 @@ import { isAuth } from "./isAuth";
             let user = await User.findOne({ where: { githubId: profile.id } })
             if (user) {
                 user.name = profile.displayName;
-                await user.save();
+                //await user.save();
             } else {
                 user = await User.create({ name: profile.displayName, githubId: profile.id }).save();
             }
