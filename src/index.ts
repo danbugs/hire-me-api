@@ -16,6 +16,7 @@ import { Recruiter } from './entities/Recruiter';
 //import { Organization } from './entities/Organization';
 import { isAuth } from "./isAuth";
 import { Question } from "./entities/Question";
+import { Answer } from "./entities/Answer";
 
 (async () => {
     await createConnection({
@@ -62,13 +63,20 @@ import { Question } from "./entities/Question";
         res.send({ question });
     });
 
-    app.get("/question", isAuth, async (_req, res) => {
-        const questions = await Question.find({
-            order: { id: "DESC" },
-        });
+    app.post("/answer", isAuth, async (req, res) => {
+        const answer = await Answer.create({
+            text: req.body.text,
+            creatorId: req.userId,
+            questionId: req.body.questionId,
+        }).save();
+        res.send({ answer });
+    });
 
+    app.get("/question", isAuth, async (_req, res) => {
+        const questions = await Question.find();
         res.send({ questions });
     });
+
     app.get('/auth/github',
         passport.authenticate('github', { session: false }));
 
