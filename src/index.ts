@@ -63,13 +63,20 @@ import { Answer } from "./entities/Answer";
         res.send({ question });
     });
 
-    app.post("/answer", isAuth, async (req, res) => {
+    app.get("/answer", isAuth, async (req, res) => {
         const answer = await Answer.create({
             text: req.body.text,
             creatorId: req.userId,
             questionId: req.body.questionId,
         }).save();
         res.send({ answer });
+    });
+
+    app.post("/answer", isAuth, async (req, res) => {
+        const answers = await Answer.find({
+            where: { questionId: req.body.questionId }
+        });
+        res.send({ answers });
     });
 
     app.get("/question", isAuth, async (_req, res) => {
