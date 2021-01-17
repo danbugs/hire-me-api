@@ -15,6 +15,7 @@ import { User } from './entities/User';
 import { Recruiter } from './entities/Recruiter';
 //import { Organization } from './entities/Organization';
 import { isAuth } from "./isAuth";
+import { Question } from "./entities/Question";
 
 (async () => {
     await createConnection({
@@ -22,7 +23,8 @@ import { isAuth } from "./isAuth";
         url: process.env.POSTGRES_URL,
         entities: [join(__dirname, './entities/*.*')],
         logging: !__prod__,
-        synchronize: !__prod__
+        synchronize: !__prod__,
+        extra: { connectionLimit: 5 }
     });
 
    //await Organization.create({ name:"testOrganization"}).save();
@@ -51,6 +53,14 @@ import { isAuth } from "./isAuth";
             cb(null, { accessToken: jwt.sign({ userId: user.id }, process.env.JWT_SECRET_KEY as string, { expiresIn: "1y" }) })
         }
     ));
+
+    app.post("/question", isAuth, async (req, res) => {
+        const question = await Question.create({
+          text: req.body.text,
+          creatorId: req.userId,
+        }).save();
+        res.send({ question });
+      });
 
     app.get('/auth/github',
         passport.authenticate('github', { session: false }));
@@ -96,7 +106,7 @@ import { isAuth } from "./isAuth";
     });
 
     app.get("/", (_req, res) => {
-        res.send("Byeeeeeeeeeeeeeeeee, World!");
+        res.send("HIRE ME!!!");
     });
 
     app.put(
