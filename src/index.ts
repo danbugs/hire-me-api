@@ -63,7 +63,7 @@ import { Answer } from "./entities/Answer";
         res.send({ question });
     });
 
-    app.get("/answer", isAuth, async (req, res) => {
+    app.post("/answer", isAuth, async (req, res) => {
         const answer = await Answer.create({
             text: req.body.text,
             creatorId: req.userId,
@@ -72,7 +72,7 @@ import { Answer } from "./entities/Answer";
         res.send({ answer });
     });
 
-    app.post("/answer", isAuth, async (req, res) => {
+    app.put("/answer", isAuth, async (req, res) => {
         const answers = await Answer.find({
             where: { questionId: req.body.questionId }
         });
@@ -82,6 +82,11 @@ import { Answer } from "./entities/Answer";
     app.get("/question", isAuth, async (_req, res) => {
         const questions = await Question.find();
         res.send({ questions });
+    });
+
+    app.put("/user", isAuth, async (req, res) => {
+        const user = await User.findOne({ where: { id: req.body.id } });
+        res.send({ user });
     });
 
     app.get("/recruiter_question", isAuth, async (req, res) => {
