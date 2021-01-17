@@ -12,6 +12,10 @@ export class User extends BaseEntity {
     @Column('text', {unique: true})
     githubId: string;
     
+    @Column('boolean', {default: false})
+    isRecruiter: boolean;
+    
     @OneToMany(() => Answer, a => a.creator)
     answers: Promise<Answer[]>
+
 }
