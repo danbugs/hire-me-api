@@ -5,12 +5,14 @@ import express from 'express';
 import { createConnection } from 'typeorm';
 import { __prod__ } from "./constants";
 import { join } from "path";
+import { getUser } from "./queries/getUser";
 
 import { Strategy as GitHubStrategy } from 'passport-github';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import { User } from './entities/User';
+import { isAuth } from "./isAuth";
 
 (async () => {
     await createConnection({
@@ -90,8 +92,18 @@ import { User } from './entities/User';
     });
 
     app.get("/", (_req, res) => {
-        res.send("it's working!");
+        res.send("Hello, World!");
     });
+
+    app.put(
+        "/user",
+        isAuth,
+        async (req: any, res) => {
+          await User.update(req.body.id, req.body);
+    
+          res.json({ user: await getUser(req.body.id)});
+        }
+      );
 
     app.listen(3000);
 })();
