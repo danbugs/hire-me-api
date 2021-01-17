@@ -77,6 +77,13 @@ import { Answer } from "./entities/Answer";
         res.send({ questions });
     });
 
+    app.get("/recruiter_question", isAuth, async (req, res) => {
+        const questions = await Question.find({
+            where: { creatorId: req.userId }
+        });
+        res.send({ questions });
+    });
+
     app.get('/auth/github',
         passport.authenticate('github', { session: false }));
 
